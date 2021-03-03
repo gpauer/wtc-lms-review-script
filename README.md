@@ -1,16 +1,13 @@
-*This tool allows you to accept reviews by a keyword, iteration & the amount to accept.
+This tool allows you to accept reviews by a keyword, iteration & the amount to accept.
+
+Viewing all the problems without having to go through modules and topics
 
 
-*Viewing all the problems without having to go through modules and topics
-
-
-*To accept reviews (By name and Iteration/no Iteration)
-
+To accept reviews (By name and Iteration/no Iteration) : 
 python3 main.py
 
 
-*To view all problems
-
+To view all problems : 
 python3 main.py -p
 
 
