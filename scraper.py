@@ -1,17 +1,32 @@
 import subprocess
 import re
+import threading
+from threader import threads, run_threads
 
 
-def scrape_projects(keyword, number):
-    topic_commands = re.compile("(wtc-lms.*)").findall(subprocess.getoutput("wtc-lms modules"))
-    problem_commands = []
-    problems = []
-    for x in topic_commands:
-        problem_commands += re.compile("(wtc-lms.*)").findall(subprocess.getoutput(x))
-    for x in problem_commands:
-        problems += re.compile("([A-Za-z\\- ]*"
-        + keyword.lower() + "[A-Za-z\\- ]*"
-        + number + "[A-Za-z0-9\\- ]*) \\[.*\\] \\(([a-z0-9\\-]+)\\)").findall(subprocess.getoutput(x).lower())
+modules = []
+topics = []
+problems = []
+
+
+def get_topics(command):
+    global topics
+    topics += re.compile("(wtc-lms.*)").findall(subprocess.getoutput(command))
+
+
+def get_problems(command):
+    global problems
+    problems += re.compile("(.*)\\[.*\\] \\((.*)\\)").findall(subprocess.getoutput(command).lower())
+
+
+def scrape_projects():
+    global modules, topics, problems
+
+    modules = re.compile("(wtc-lms.*)").findall(subprocess.getoutput("wtc-lms modules"))
+    for i in range(0, len(modules), threads):
+        run_threads(get_topics, modules[i : i + threads])
+    for i in range(0, len(topics), threads):
+        run_threads(get_problems, topics[i : i + threads])
     return(problems)
 
 

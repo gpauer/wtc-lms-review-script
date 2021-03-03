@@ -9,15 +9,10 @@ if __name__ == "__main__":
     logged = input("Are you logged in to wtc-lms (y/N)?")
     if logged != "y": os.system("wtc-lms login")
 
+
     if len(argv) > 1 and argv[1] == "-p":
-        keyword = input("\nEnter keyword for project you want to see (leave blank for all):")
-        if keyword != "":
-            iteration = input("\nWhich iteration would you like to review? (leave blank for all) ")
-        else:
-            iteration = ""
-        print("\nProjects:")
-        for x in scrape_projects(keyword, iteration):
-            print(x[0].capitalize(),"\nUUID:",x[1]+"\n")
+        for x in scrape_projects():
+            print(" ".join([i.capitalize() for i in x[0].split()]),"\nUUID:",x[1]+"\n")
     else:
         name = input("What would you like to review? (Do not specify the iteration) ")
         iteration = input("Which iteration would you like to review? (leave blank for more review matches) ")

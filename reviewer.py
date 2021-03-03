@@ -2,9 +2,11 @@ from scraper import scrape_reviews
 import subprocess
 import os
 import re
+from threader import threads, run_threads
 
-
-def review_outline(review_accept_output, UUID):
+def review_outline(UUID):
+    review_accept_output = subprocess.getoutput("wtc-lms accept " + UUID)
+    print("UUID:", UUID)
     directory = (re.compile("\\/.*").findall(review_accept_output))[0]
     f = open(directory+"/review.txt", "w")
     print("review.txt created in:", directory)
@@ -23,8 +25,10 @@ def review_outline(review_accept_output, UUID):
 
 
 def review_accept(review_list, n):
-    i = 0
-    while ((i < n) and (i < len(review_list))):
-        review_outline(subprocess.getoutput("wtc-lms accept " + review_list[i][1]), review_list[i][1])
-        print(review_list[i][0].capitalize(), "accepted for review. UUID:", review_list[i][1])
-        i += 1
+    review_list = review_list[0:n]
+    for x in review_list: print(f"Name: {x[0]} UUID: {x[1]}")
+    accept = input("Would you like to accept the following reviews (y/N)?")
+    if accept.lower() != 'y': os.sys.exit()
+    else:
+        UUID_list = [x[1] for x in review_list]
+        run_threads(review_outline, UUID_list)
